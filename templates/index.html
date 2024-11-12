@@ -18,24 +18,22 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-        margin: 20px;
+        margin: 10px 20px 30px 20px;
     }
-    .category-buttons button {
+    .main_menu {
         width: 200px;
         height: 100px;
+        background-color: white;
         padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
+        border: #b3b3b3 solid 1px;
+        border-radius: 10px;
         cursor: pointer;
+        margin: 0px 5px;
     }
     .up-buttons, .down-buttons {
         display: flex;
         justify-content: center; /* 버튼들을 수평으로 가운데 정렬 */
         margin-bottom: 10px; /* 버튼 간의 간격 조정 */
-    }
-
-    .main_menu {
-        margin: 0 5px; /* 버튼 간의 간격 조정 */
     }
     .main_menu:hover{
         background-color: #B72424;
@@ -48,26 +46,64 @@
         overflow: hidden;
     }
     .responsive-image {
-        width: 100%; /* 이미지 너비를 배너 너비에 맞춤 */
-        height: auto; /* 비율에 맞춰 높이를 자동으로 조정 */
+        width: 100%;
+        height: auto; 
     }
-    .restaurant-section, .recipe-section, .best-section {
+    .section {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
         margin: 20px;
     }
+    .bg-section {
+        height: 250px;
+        display: flex; 
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f8f8;
+        margin : 10px;
+        border-radius: 10px;
+    }
+    .restaurant-section, .recipe-section, .best-section {
+        flex: 1;
+        margin: 30px 10px;
+    }
+    .restaurant-section h4, .recipe-section h4, .best-section h4 {
+        margin: 0px 10px;
+    }
     .restaurant-section select, .recipe-section select {
+        justify-content: center;
+        width: 80%;
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
         margin: 10px 0;
     }
-    .recipe-card {
-        border: 1px solid #ddd;
+    .button {
+        width: 80%;
+        color : white;
+        background-color: #B72424;
+        padding: 10px;
+        border: 0px;
         border-radius: 5px;
-        padding: 15px;
+        margin : 10px 0px;
+    }
+    .recipe-card {
+        height: 250px;
+        border: 1px solid #9c9c9c;
+        border-radius: 10px;
+        padding: 0px 20px;
         margin: 10px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        text-align: center;
+    }
+    .recipe_btn {
+        border: 0;
+        text-decoration: none;
+        color: black;
     }
 </style>
 
@@ -75,57 +111,112 @@
     <div class="category">
         <div class="up-buttons">
             <button class="main_menu" value="all">전체보기</button>
-            <button class="main_menu" value="korea">한   식</button>
-            <button class="main_menu" value="france">양   식</button>
-            <button class="main_menu" value="china">중   식</button>
-            <button class="main_menu" value="japan">일   식</button>
+            <button class="main_menu" value="korea">한&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="france">양&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="china">중&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="japan">일&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
         </div>
         <div class="down-buttons">
-            <button class="main_menu" value="flour">분   식</button>
-            <button class="main_menu" value="sasia">동 남 아</button>
+            <button class="main_menu" value="flour">분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="sasia">동&nbsp;남&nbsp;아</button>
             <button class="main_menu" value="india">인도/중동</button>
             <button class="main_menu" value="bread">베이커리/카페</button>
-            <button class="main_menu" value="etc">기   타</button>
+            <button class="main_menu" value="etc">기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;타</button>
         </div>
     </div>
 </div>
 
 <div class="banner">
     <a href="#">
-        <img src="/static/img/ad.png" alt="Advertisement" class="responsive-image">
+        <img src="/static/img/ad@2x.png" alt="Advertisement" class="responsive-image">
     </a>
 </div>
 
-<div class="restaurant-section">
-    <h3>Restaurant by REGION</h3>
-    <select>
-        <option option value="" disabled selected>:: 시/도 ::</option>
-        <option>서울</option>
-        <option>부산</option>
-    </select>
-    <select>
-        <option option value="" disabled selected>:: 시/군/구 ::</option>
-        <option>강남구</option>
-        <option>서초구</option>
-    </select>
-    <button class="button">Find restaurant</button>
+<div class="section">
+    <div class="restaurant-section">
+        <h4>Restaurant by REGION</h4>
+        <div class="bg-section">
+            <form>
+                <select id="city" onchange="updateDistricts()">
+                    <option value="" disabled selected>:: 시/도 ::</option>
+                    <option value="seoul">서울</option>
+                    <option value="busan">부산</option>
+                    <option value="daejeon">대전</option>
+                    <option value="daegu">대구</option>
+                    <option value="incheon">인천</option>
+                    <option value="gwangju">광주</option>
+                </select>
+                <select id="district">
+                    <option value="" disabled selected>:: 시/군/구 ::</option>
+                    
+                </select>
+                <button class="button" type="submit">Find restaurant</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function updateDistricts() {
+            const citySelect = document.getElementById("city");
+            const districtSelect = document.getElementById("district");
+            const selectedCity = citySelect.value;
+
+            // 기존 옵션 삭제
+            districtSelect.innerHTML = '<option value="" disabled selected>:: 시/군/구 ::</option>';
+
+            let districts = [];
+
+            // 선택된 시/도에 따른 시/군/구 목록 설정
+            if (selectedCity === "seoul") {
+                districts = ["강남구", "서초구", "중구", "종로구", "성동구"];
+            } else if (selectedCity === "busan") {
+                districts = ["해운대구", "수영구", "부산진구", "동래구", "영도구"];
+            } else if (selectedCity === "daejeon") {
+                districts = ["유성구", "서구", "동구", "중구", "대덕구"];
+            } else if (selectedCity === "daegu") {
+                districts = ["중구", "동구", "서구", "남구", "북구"];
+            } else if (selectedCity === "incheon") {
+                districts = ["미추홀구", "연수구", "남동구", "부평구", "계양구"];
+            } else if (selectedCity === "gwangju") {
+                districts = ["광산구", "남구", "동구", "북구", "서구"];
+            }
+
+            // 시/군/구 옵션 추가
+            districts.forEach(district => {
+                const option = document.createElement("option");
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+    </script>
+
+
+    <div class="recipe-section">
+        <h4>Today Recipe</h4>
+        <div class="recipe-card">
+            <p>
+                Chilli Tomato & Basil<br>
+                Baked Beans on Toast
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="best-section">
+        <h4>Best Restaurant</h4>
+        <ol>
+            <li>매일드리컨</li>
+            <li>온마을</li>
+            <li>가인</li>
+            <li>미플부엌</li>
+            <li>릴리베이커리</li>
+        </ol>
+    </div>
+
+
 </div>
 
-<div class="recipe-section">
-    <h3>Today Recipe</h3>
-    <div class="recipe-card">
-        <span>Chilli Tomato & Basil Baked Beans on Toast</span>
-        <a href="#" class="button">→</a>
-    </div>
-</div>
-<div class="best-section">
-    <h4>Best Restaurant</h4>
-    <ol>
-        <li>매일드리컨</li>
-        <li>온마을</li>
-        <li>가인</li>
-        <li>미플부엌</li>
-        <li>릴리베이커리</li>
-    </ol>
-</div>
+
 {% endblock %}
