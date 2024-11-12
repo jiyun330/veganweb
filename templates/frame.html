@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>VEGAN Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .logo {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            font-size: large;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+        }
+        .login, .logout {
+            background-color: #005D0B; /* Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        footer {
+            margin-top: auto;
+        }
+        .grey_footer {
+            padding: 20px 0px 20px 200px;
+            font-size: small;
+            background-color: #f1f1f1;
+            position: relative;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .white_footer {
+            margin: 15px 0px 20px 80px;
+            background-color: white;
+            display: flex; /* Flexbox 사용 */
+            gap: 20px; /* 요소 간격 */
+        }
+
+        .white_footer p {
+            margin: 0;
+            font-size: small;
+            color:#585858;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <a class="logo" href="/">VEGAN</a>
+        <nav class="nav-links">
+            <a href="#">INTRODUCTION</a>
+            <a href="/res_list" value="">RESTAURANT</a>
+            <a href="/rec_list">RECIPE</a>
+            {% if ID %}
+                <p>{{name}} 님</p>
+                <button class="logout" onClick="location.href='/logout'">LOGOUT</button>
+            {% else %}
+                <button class="login" onClick="location.href='/login'">LOGIN</button>
+            {% endif %}
+                
+             
+        </nav>
+    </header>
+    <hr>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <div class="grey_footer">
+            <p style="font-weight: bold;">㈜비건컴퍼니</p>
+            <p>사업자등록번호 : 123-45-67890</p>
+            <p>대표 : 000</p>
+            <p>통신판매업 : 신고번호 제2024-경기수원-1234호</p>
+            <p>경기도 수원시 영통구 월드컵로 206 아주대학교 팔달관 410호</p>
+            <p>㈜비건컴퍼니는 통신판매중개자이며, 통신판매의 당사자가 아닙니다. 상품, 상품정보, 거래에 관한 의무와 책임은 판매자에게 있습니다.</p>
+            <p>© 2024 VEGAN Company. All rights reserved.</p>
+        </div>
+        <div class="white_footer">
+            <p>서비스 이용약관</p>
+            <p>개인정보 처리방침</p>
+            <p>공지사항</p>
+            <p>일반 / 제휴 문의</p>
+        </div>
+    </footer>
+</body>
+</html>

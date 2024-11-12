@@ -1,0 +1,90 @@
+{% extends "frame.html" %}
+
+{% block content %}
+    <style>
+        .signup-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 가로 중앙 정렬 */
+            width: 300px;
+            margin: auto; /* 수직 중앙 정렬을 위한 마진 */
+        }
+
+        input[type="text"], input[type="password"], input[type="date"] {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="email"], select {
+            margin: 10px 0;
+            padding: 10px;
+            width: 50%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .email_inline {
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 세로 중앙 정렬 */
+        }
+
+        .email_inline input[type="email"] {
+            margin-right: 5px; /* 입력 필드와 @ 사이의 간격 */
+            padding: 10px; /* 입력 필드 패딩 */
+            border: 1px solid #ccc; /* 테두리 설정 */
+            border-radius: 4px; /* 테두리 둥글게 */
+            width: 150px; /* 입력 필드 너비 조정 (필요에 따라 조정) */
+        }
+
+        .email_inline select {
+            padding: 10px; /* 드롭다운 패딩 */
+            border: 1px solid #ccc; /* 테두리 설정 */
+            border-radius: 4px; /* 테두리 둥글게 */
+        }
+
+
+        .sign-up-button {
+            padding: 10px 20px;
+            background-color: white; /* 버튼 배경색 */
+            border: 1px solid #ccc;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .sign-up-button:hover {
+            background-color: #B72424; /* 호버 시 색상 변경 */
+        }
+    </style>
+
+    <div class="signup-container">
+        <h2>회원가입</h2>
+        <input type="text" placeholder="아이디" required>
+        <input type="password" placeholder="비밀번호 (8자 이상 입력)" required>
+        <input type="password" placeholder="비밀번호 확인" required>
+        <input type="text" placeholder="닉네임" required>
+        <input type="date" placeholder="생년월일" required> 
+        <div class="email_inline"> 
+            <input type="email" placeholder="이메일" required> @ 
+            <select>
+                <option value="" disabled selected>:: 이메일 선택 ::</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="naver.com">naver.com</option>
+                <option value="daum.net">daum.net</option>
+                <!-- 추가 이메일 도메인을 필요에 따라 추가 -->
+            </select>
+        </div>
+        
+        <label>
+            <input type="checkbox"> [선택] 광고성 이메일을 수신합니다.
+        </label>
+        <button class="sign-up-button">SIGN UP</button>
+    </div>
+
+{% endblock %}

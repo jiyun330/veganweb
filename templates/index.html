@@ -1,0 +1,113 @@
+{% extends "frame.html" %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .category-buttons {
+        background-color: #f8f8f8;
+        height: 300px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px;
+    }
+    .category-buttons button {
+        width: 200px;
+        height: 100px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .main_menu:hover{
+        background-color: #B72424;
+        font-weight: bold;
+        color: white;
+    }
+    .banner {
+        background-color: hsl(231, 48%, 48%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    .restaurant-section, .recipe-section, .best-section {
+        margin: 20px;
+    }
+    .restaurant-section select, .recipe-section select {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin: 10px 0;
+    }
+    .recipe-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<div class="category-buttons">
+    <div class="up-buttons">
+        <button class="main_menu" value="all">전체보기</button>
+        <button class="main_menu" value="korea">한   식</button>
+        <button class="main_menu" value="france">양   식</button>
+        <button class="main_menu" value="china">중   식</button>
+        <button class="main_menu" value="japan">일   식</button>
+    </div>
+    <div class="down-buttons">
+        <button class="main_menu" value="flour">분   식</button>
+        <button class="main_menu" value="sasia">동 남 아</button>
+        <button class="main_menu" value="india">인도/중동</button>
+        <button class="main_menu" value="bread">베이커리/카페</button>
+        <button class="main_menu" value="etc">기   타</button>
+    </div>
+</div>
+
+<div class="banner">
+    <h2>The Allure of Plant-Based Foods:</h2>
+    <h3>A COLLECTION OF VEGAN FOOD SALES</h3>
+    <button class="button">go</button>
+</div>
+
+<div class="restaurant-section">
+    <h3>Restaurant by REGION</h3>
+    <select>
+        <option option value="" disabled selected>:: 시/도 ::</option>
+        <option>서울</option>
+        <option>부산</option>
+    </select>
+    <select>
+        <option option value="" disabled selected>:: 시/군/구 ::</option>
+        <option>강남구</option>
+        <option>서초구</option>
+    </select>
+    <button class="button">Find restaurant</button>
+</div>
+
+<div class="recipe-section">
+    <h3>Today Recipe</h3>
+    <div class="recipe-card">
+        <span>Chilli Tomato & Basil Baked Beans on Toast</span>
+        <a href="#" class="button">→</a>
+    </div>
+</div>
+<div class="best-section">
+    <h4>Best Restaurant</h4>
+    <ol>
+        <li>매일드리컨</li>
+        <li>온마을</li>
+        <li>가인</li>
+        <li>미플부엌</li>
+        <li>릴리베이커리</li>
+    </ol>
+</div>
+{% endblock %}
