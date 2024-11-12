@@ -34,7 +34,6 @@ class DB:
             return None
 
 
-
 # ElephantSQL 연결 URL 설정
 database_url = "postgres://jgtlgycb:vTi1ir-ZNfoYi8xaS07Bqxthjm53eedD@salt.db.elephantsql.com/jgtlgycb"
 

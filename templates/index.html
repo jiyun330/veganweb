@@ -7,11 +7,15 @@
         margin: 0;
         padding: 0;
     }
-
+    .category{
+        text-align: center;
+    }
     .category-buttons {
         background-color: #f8f8f8;
         height: 300px;
         display: flex;
+        justify-content: center; /* 수평 가운데 정렬 */
+        align-items: center;
         flex-wrap: wrap;
         gap: 10px;
         margin: 20px;
@@ -24,16 +28,28 @@
         border-radius: 5px;
         cursor: pointer;
     }
+    .up-buttons, .down-buttons {
+        display: flex;
+        justify-content: center; /* 버튼들을 수평으로 가운데 정렬 */
+        margin-bottom: 10px; /* 버튼 간의 간격 조정 */
+    }
+
+    .main_menu {
+        margin: 0 5px; /* 버튼 간의 간격 조정 */
+    }
     .main_menu:hover{
         background-color: #B72424;
         font-weight: bold;
         color: white;
     }
     .banner {
-        background-color: hsl(231, 48%, 48%);
-        color: white;
-        padding: 20px;
-        text-align: center;
+        margin: 20px 0px;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .responsive-image {
+        width: 100%; /* 이미지 너비를 배너 너비에 맞춤 */
+        height: auto; /* 비율에 맞춰 높이를 자동으로 조정 */
     }
     .restaurant-section, .recipe-section, .best-section {
         margin: 20px;
@@ -56,26 +72,28 @@
 </style>
 
 <div class="category-buttons">
-    <div class="up-buttons">
-        <button class="main_menu" value="all">전체보기</button>
-        <button class="main_menu" value="korea">한   식</button>
-        <button class="main_menu" value="france">양   식</button>
-        <button class="main_menu" value="china">중   식</button>
-        <button class="main_menu" value="japan">일   식</button>
-    </div>
-    <div class="down-buttons">
-        <button class="main_menu" value="flour">분   식</button>
-        <button class="main_menu" value="sasia">동 남 아</button>
-        <button class="main_menu" value="india">인도/중동</button>
-        <button class="main_menu" value="bread">베이커리/카페</button>
-        <button class="main_menu" value="etc">기   타</button>
+    <div class="category">
+        <div class="up-buttons">
+            <button class="main_menu" value="all">전체보기</button>
+            <button class="main_menu" value="korea">한   식</button>
+            <button class="main_menu" value="france">양   식</button>
+            <button class="main_menu" value="china">중   식</button>
+            <button class="main_menu" value="japan">일   식</button>
+        </div>
+        <div class="down-buttons">
+            <button class="main_menu" value="flour">분   식</button>
+            <button class="main_menu" value="sasia">동 남 아</button>
+            <button class="main_menu" value="india">인도/중동</button>
+            <button class="main_menu" value="bread">베이커리/카페</button>
+            <button class="main_menu" value="etc">기   타</button>
+        </div>
     </div>
 </div>
 
 <div class="banner">
-    <h2>The Allure of Plant-Based Foods:</h2>
-    <h3>A COLLECTION OF VEGAN FOOD SALES</h3>
-    <button class="button">go</button>
+    <a href="#">
+        <img src="/static/img/ad.png" alt="Advertisement" class="responsive-image">
+    </a>
 </div>
 
 <div class="restaurant-section">
