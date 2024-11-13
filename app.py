@@ -1,9 +1,10 @@
-from flask import make_response, redirect, render_template, request, url_for
+from flask import make_response, redirect, render_template, request, url_for, session, jsonify
 from flask import Flask
 import psycopg2
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+app.secret_key = 'your_secret_key' # 세션용 비밀키
 
 class DB:
     def __init__(self, database_url):
@@ -17,7 +18,7 @@ class DB:
     
     def select_user(self, userID):
         try:
-            self.cur.execute("SELECT user_id, name FROM public.users WHERE user_id = %s;", (userID,))
+            self.cur.execute("SELECT user_id, name FROM public.users WHERE user_id = %s;", (userID, ))
             return self.cur.fetchone()  # 사용자 정보를 가져옴
         except Exception as e:
             print(f"Error during select_user execution: {e}")
@@ -32,7 +33,7 @@ class DB:
         except Exception as e:
             print(f"Error during query execution: {e}")
             return None
-
+        
 
 # ElephantSQL 연결 URL 설정
 database_url = "postgres://jgtlgycb:vTi1ir-ZNfoYi8xaS07Bqxthjm53eedD@salt.db.elephantsql.com/jgtlgycb"
@@ -42,18 +43,15 @@ db = DB(database_url)
 
 # 로그인 되어 있을 때의 유저 정보
 def get_user_info():
-    ID = request.cookies.get('ID')
-    name = request.cookies.get('name')
+    ID = session.get('ID')
+    name = session.get('name')
     return ID, name
 
 # 메인 화면
 @app.route("/", methods=['GET', 'POST'])
 def home():
     ID, name = get_user_info()
-    if ID:
-        return render_template("index.html", ID=ID, name=name)
-    else:
-        return render_template("index.html")
+    return render_template("index.html", ID=ID, name=name)
 
 
 ####### 개발 1주차 #######
@@ -68,10 +66,9 @@ def login():
         user = db.select_user_password(userID, password)
         if user:
             user_info = db.select_user(userID)
-            resp = make_response(redirect(url_for('home')))  # 메인 화면으로 리다이렉트
-            resp.set_cookie('ID', user_info[0])  # ID 저장
-            resp.set_cookie('name', user_info[1])  # 이름 저장
-            return resp
+            session['ID'] = user_info[0]  # 세션에 ID 저장
+            session['name'] = user_info[1]  # 세션에 이름 저장
+            return redirect(url_for('home'))
         else:
             print("Invalid credentials")  # 로그인 실패 메시지 출력
             return render_template('login.html', message='아이디 또는 비밀번호가 일치하지 않습니다.')
@@ -80,9 +77,36 @@ def login():
 
 @app.route("/logout")
 def logout():
-    resp = make_response(redirect(url_for('home')))
-    resp.delete_cookie('ID')
-    return resp
+    session.pop('ID', None)
+    session.pop('name', None)
+    return redirect(url_for('home'))
+
+# 아이디 비밀번호 찾기
+@app.route("/find_id", methods=['GET', 'POST'])
+def find_id():
+    userID = None
+    message = ''
+    
+    if request.method == 'POST':
+        userID = request.form.get("userID")
+        
+        if userID:
+            user = db.select_user(userID)  # 데이터베이스에서 사용자 확인
+            
+            if user: 
+                message = '아이디 확인 완료.'
+            else: 
+                message = '없는 계정입니다.'
+        else:
+            message = '아이디를 입력하세요.'
+    
+    return render_template("find1.html", message=message, userID=userID)
+
+@app.route("/find_pw/<userID>", methods=['GET', 'POST'])
+def find_pw(userID):
+    # userID를 기반으로 비밀번호 찾기 로직을 추가할 수 있습니다.
+    # 예를 들어, 해당 userID를 데이터베이스에서 찾고 관련 정보를 조회할 수 있습니다.
+    return render_template("find2.html", userID=userID)
 
 # 회원가입 화면
 @app.route("/join")
@@ -115,3 +139,6 @@ def rec_list():
 def rec_detail():
     ID, name = get_user_info()
     return render_template("recipe_detail.html", ID=ID, name=name)
+
+if __name__ == "__main__":
+    app.run()

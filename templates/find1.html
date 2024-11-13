@@ -1,0 +1,48 @@
+{% extends "frame.html" %}
+
+{% block content %}
+<style>
+    input[type="text"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .find-button {
+        padding: 10px 20px;
+        color: black;
+        border: 1px #ccc solid;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #B72424;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+</style>
+<div class="find-div">
+    <h2>아이디, 비밀번호 찾기</h2>
+    <form method="post">
+        <input type="text" name="userID" placeholder="아이디" value="{{ userID if userID else '' }}" required>
+        <button type="submit" class="find-button">Find ID</button>
+        {% if message %}
+            <p style="color:red;">{{ message }}</p>
+        {% endif %}
+    </form>
+    {% if message == '아이디 확인 완료.' %}
+        <form method="get" action="{{ url_for('find_pw', userID=userID) }}">
+            <input type="hidden" name="userID" value="{{ userID }}">
+            <button type="submit" id="findPwButton" class="submit-button">Find PW</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
