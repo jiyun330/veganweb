@@ -105,6 +105,14 @@
         text-decoration: none;
         color: black;
     }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 30px 10px;
+    }
+    li {
+        margin : 10px 0px;
+    }
 </style>
 
 <div class="category-buttons">
@@ -240,21 +248,84 @@
         </div>
     </div>
 
-
-
     <div class="best-section">
         <h4>Best Restaurant</h4>
-        <ol>
+        <ul id="restaurant-list">
             <li>매일드리컨</li>
             <li>온마을</li>
             <li>가인</li>
             <li>미플부엌</li>
             <li>릴리베이커리</li>
-        </ol>
+        </ul>
     </div>
-
+    
+    <style>
+        .highlight {
+            padding: 20px;
+            border-radius: 20px;
+            font-size: medium;
+            font-weight: bold;
+            background-color: #005D0B;
+            color: white;
+        }
+        .highlight-red {
+            color: #B72424;
+        }
+        .highlight-grey {
+            color: #515151;
+        }
+        .normal-padding {
+            padding: 0px 20px;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const listItems = document.querySelectorAll('#restaurant-list li');
+            let currentIndex = 0;
+    
+            listItems.forEach((item, index) => {
+                // 인덱스 0, 1, 2의 숫자는 빨간색으로 설정
+                const numberSpan = `<span class="${index < 3 ? 'highlight-red' : 'highlight-grey'}">${index + 1}.&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+                item.innerHTML = `${numberSpan}${item.textContent}`;
+                item.classList.add('normal-padding');
+            });
+    
+            function highlightNext() {
+                const currentItem = listItems[currentIndex];
+                currentItem.classList.add('highlight');
+                currentItem.classList.remove('normal-padding');
+    
+                // 강조 상태에서 숫자의 색상을 흰색으로 변경
+                const numberSpan = currentItem.querySelector('span');
+                if (numberSpan) {
+                    numberSpan.style.color = 'white';
+                }
+    
+                setTimeout(() => {
+                    // 강조 클래스 제거
+                    currentItem.classList.remove('highlight');
+                    currentItem.classList.add('normal-padding');
+                    
+                    // 원래 숫자 색상으로 되돌리기 (0, 1, 2 인덱스에서만 빨간색으로 유지)
+                    if (currentIndex < 3) {
+                        numberSpan.style.color = '#B72424'; // 빨간색으로 복원
+                    } else {
+                        numberSpan.style.color = '#515151'; 
+                    }
+    
+                    // 인덱스 증가
+                    currentIndex = (currentIndex + 1) % listItems.length;
+                    highlightNext();
+                }, 4000);
+            }
+    
+            highlightNext();
+        });
+    </script>
 
 </div>
-
+    
+    
 
 {% endblock %}

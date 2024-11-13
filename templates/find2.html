@@ -1,12 +1,84 @@
 {% extends "frame.html" %}
 
 {% block content %}
-<!-- find2.html -->
-<h2>비밀번호 찾기</h2>
-<p>아이디: {{ userID }}</p>
-<form>
-    <input type="password" name="password" placeholder="비밀번호" required>
-    <input type="password" name="password2" placeholder="비밀번호확인" required>
-    <button type="submit" id="update_pw">비밀번호 수정</button>
-</form>
+<style>
+    .find-div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 300px;
+        margin: auto;
+    }
+    input[type="password"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    #update_pw {
+        padding: 10px 20px;
+        background-color: #B72424;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+    }
+</style>
+<div class="find-div">
+    <h2>비밀번호</h2>
+    <p>아이디: {{ userID }}</p>
+    <form method="POST">
+        <input type="password" id="pwd1" placeholder="새 비밀번호" required>
+        <input type="password" id="pwd2" placeholder="새 비밀번호 확인" required>
+        <div id="alert-success" style="color: green; display: none;">비밀번호가 일치합니다.</div>
+        <div id="alert-danger" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</div>
+        <button type="submit" id="update_pw">비밀번호 수정</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pwd1 = document.getElementById('pwd1');
+        const pwd2 = document.getElementById('pwd2');
+        const alertSuccess = document.getElementById('alert-success');
+        const alertDanger = document.getElementById('alert-danger');
+        const submitButton = document.getElementById('update_pw'); // 버튼 ID 수정
+
+        // 초기 상태 설정
+        alertSuccess.style.display = 'none';
+        alertDanger.style.display = 'none';
+        submitButton.disabled = true; // 기본적으로 버튼 비활성화
+
+        // 입력 이벤트 리스너 추가
+        pwd1.addEventListener('input', checkPasswords);
+        pwd2.addEventListener('input', checkPasswords);
+
+        function checkPasswords() {
+            const password1 = pwd1.value;
+            const password2 = pwd2.value;
+
+            // 두 비밀번호가 모두 입력된 경우에만 확인
+            if (password1 !== "" && password2 !== "") {
+                if (password1 === password2) {
+                    alertSuccess.style.display = 'block';
+                    alertDanger.style.display = 'none';
+                    submitButton.disabled = false; // 버튼 활성화
+                } else {
+                    alertSuccess.style.display = 'none';
+                    alertDanger.style.display = 'block';
+                    submitButton.disabled = true; // 버튼 비활성화
+                }
+            } else {
+                // 둘 중 하나라도 비어있으면 메시지 숨김
+                alertSuccess.style.display = 'none';
+                alertDanger.style.display = 'none';
+                submitButton.disabled = true; // 버튼 비활성화
+            }
+        }
+    });
+</script>
+
 {% endblock %}

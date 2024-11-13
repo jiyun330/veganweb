@@ -1,4 +1,4 @@
-from flask import make_response, redirect, render_template, request, url_for, session, jsonify
+from flask import redirect, render_template, request, url_for, session
 from flask import Flask
 import psycopg2
 
@@ -28,7 +28,7 @@ class DB:
         try:
             self.cur.execute("SELECT * FROM public.users WHERE user_id = %s AND password = %s;", (userID, password))
             result = self.cur.fetchone()
-            print(f"Query executed successfully: {userID}, {password} -> {result}")  # 디버깅 정보 출력
+            print(f"Query executed successfully: {userID}, {password} -> {result}")
             return result
         except Exception as e:
             print(f"Error during query execution: {e}")
@@ -91,21 +91,19 @@ def find_id():
         userID = request.form.get("userID")
         
         if userID:
-            user = db.select_user(userID)  # 데이터베이스에서 사용자 확인
+            user = db.select_user(userID) 
             
             if user: 
-                message = '아이디 확인 완료.'
+                message = '해당 계정은 존재합니다'
             else: 
-                message = '없는 계정입니다.'
+                message = '해당 계정은 없습니다'
         else:
-            message = '아이디를 입력하세요.'
+            message = '아이디를 입력하세요'
     
     return render_template("find1.html", message=message, userID=userID)
 
 @app.route("/find_pw/<userID>", methods=['GET', 'POST'])
 def find_pw(userID):
-    # userID를 기반으로 비밀번호 찾기 로직을 추가할 수 있습니다.
-    # 예를 들어, 해당 userID를 데이터베이스에서 찾고 관련 정보를 조회할 수 있습니다.
     return render_template("find2.html", userID=userID)
 
 # 회원가입 화면
