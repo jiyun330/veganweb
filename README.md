@@ -1,57 +1,63 @@
 # VeganWeb
+---
+### 개발 1주차
 
-### 실행 방법
-vscode의 터미널에서 프로젝트 디렉토리로 이동한 후, 가상환경을 생성합니다:
-
-```bash
-python -m venv venv
+폴더 구조
 ```
-
-가상환경 실행 : 
-```bash
-## 맥/리눅스 버전
-source venv/bin/activate
-## 윈도우 버전
-.\venv\Scripts\activate
+VEGAN/
+│
+├── __pycache__/
+│
+├── .venv/
+│
+├── static/
+│   └── img/
+│       └── ad@2x.png
+│
+├── templates/
+│   ├── find1.html
+│   ├── find2.html
+│   ├── frame.html
+│   ├── index.html
+│   ├── join.html
+│   ├── login.html
+│   ├── recipe_detail.html
+│   ├── recipe_list.html
+│   ├── restaurant_detail.html
+│   └── restaurant_list.html
+│
+├── app.py
+│
+├── README.md
+│
+└── requirements.txt
 ```
-
-클론한 프로젝트의 requirements.txt 파일을 사용하여 필요한 패키지를 설치합니다:
-```bash : 
-pip install -r requirements.txt
-```
-
-웹 실행 : 
-```bash
-flask run
-```
-
-http://127.0.0.1:5000 이동
-
-<hr>
-
-## 개발 1주차
 
 ### 사용 기술
-- **웹 프레임워크**: Flask 웹 기본 프레임 구현 완료
-- **데이터베이스**: ElephantSQL 연동 완료
+- **웹 프레임워크**: Flask를 기반으로 한 웹 애플리케이션의 기본적인 프레임워크 구축이 완료되었습니다.
+- **데이터베이스**: ElephantSQL과의 성공적인 연동을 통해 데이터 저장 및 관리가 원활하게 이루어질 수 있도록 구현되었습니다.
 
 ### 구현 기능
 1. **메인 페이지**
+   - 다양한 음식 종류에 따라 직관적인 카테고리 버튼을 제공하여 사용자 편의를 극대화하는 검색 기능을 구현하였습니다.
+   - 지역별 식당 검색을 위한 select 태그를 추가하여, 사용자가 원하는 지역의 식당을 빠르고 쉽게 찾을 수 있도록 도와줍니다.
+   - 매일 추천하는 레시피를 자동으로 제공하여, 사용자가 새로운 레시피를 손쉽게 발견할 수 있도록 설계되었습니다.
+   - 사용자 경험을 고려한 별점 기준의 식당 랭킹을 제공하여, 평점이 높은 식당을 효율적으로 검색할 수 있습니다.
+
 2. **로그인 페이지**
+   - 안전하고 직관적인 로그인 기능을 구현하여 사용자가 손쉽게 계정에 접근할 수 있도록 했습니다.
+   - 회원가입 페이지로의 원활한 이동을 위한 버튼을 배치하여 신규 사용자 유입을 용이하게 하였습니다.
+   - 아이디 및 비밀번호를 찾을 수 있는 기능을 제공하여, 사용자가 로그인에 어려움을 겪지 않도록 지원합니다.
+
 3. **회원가입 페이지**
+   - 신규 사용자가 간편하게 회원가입을 할 수 있도록, 사용자 친화적인 회원가입 기능을 구현했습니다.
 
-### 회원가입 기능
-참고 : https://velog.io/@hp657/Flask%EB%9E%91-PostgreSQL%EB%A1%9C-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85-%EA%B8%B0%EB%8A%A5-%EB%A7%8C%EB%93%A4%EA%B8%B0 
-- 회원가입 화면은 `templates/join.html` 파일에서 구현되었습니다.
-- 회원가입 기능을 구현하기 위해서는 `app.py` 파일 중 다음 코드에 추가해야 합니다:
-
-```python
-# 회원가입 화면
-@app.route("/join")
-def join():
-    return render_template("join.html")
-```
+--- 
 
 ### 개발 2주차
 4. **식당/레시피 리스트 페이지**
 5. **식당/레시피 상세 페이지**
+
+### 개발 3주차
+6. **식당 리뷰 기능 추가**
+7. **레시피 리뷰 기능 추가**
