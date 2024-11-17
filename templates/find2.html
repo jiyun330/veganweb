@@ -31,8 +31,8 @@
     <h2>비밀번호</h2>
     <p>아이디: {{ userID }}</p>
     <form method="POST">
-        <input type="password" id="pwd1" placeholder="새 비밀번호" required>
-        <input type="password" id="pwd2" placeholder="새 비밀번호 확인" required>
+        <input type="password" id="pwd1" name="pwd1" placeholder="새 비밀번호" required>
+        <input type="password" id="pwd2" name="pwd2" placeholder="새 비밀번호 확인" required>
         <div id="alert-success" style="color: green; display: none;">비밀번호가 일치합니다.</div>
         <div id="alert-danger" style="color: red; display: none;">비밀번호가 일치하지 않습니다.</div>
         <button type="submit" id="update_pw">비밀번호 수정</button>

@@ -1,5 +1,6 @@
 from flask import redirect, render_template, request, url_for, session
 from flask import Flask
+import bcrypt
 import psycopg2
 
 app = Flask(__name__)
@@ -28,12 +29,17 @@ class DB:
         try:
             self.cur.execute("SELECT * FROM public.users WHERE user_id = %s AND password = %s;", (userID, password))
             result = self.cur.fetchone()
-            print(f"Query executed successfully: {userID}, {password} -> {result}")
             return result
         except Exception as e:
             print(f"Error during query execution: {e}")
             return None
-        
+    
+    def change_pwd(self, userID, new_password):
+        try:
+            self.cur.execute("UPDATE public.users SET password = %s WHERE user_id = %s;", (new_password, userID))
+            self.conn.commit()
+        except Exception as e:
+            print(f"Error during change_pwd execution: {e}")
 
 # ElephantSQL 연결 URL 설정
 database_url = "postgres://jgtlgycb:vTi1ir-ZNfoYi8xaS07Bqxthjm53eedD@salt.db.elephantsql.com/jgtlgycb"
@@ -104,6 +110,16 @@ def find_id():
 
 @app.route("/find_pw/<userID>", methods=['GET', 'POST'])
 def find_pw(userID):
+    if request.method == 'POST':
+        new_password = request.form.get('pwd2')
+
+        if new_password:
+            # 비밀번호 업데이트
+            db.change_pwd(userID, new_password)
+            return redirect(url_for('login'))
+        else:
+            return render_template("find2.html", userID=userID, message="해당 사용자 ID가 존재하지 않습니다.")
+
     return render_template("find2.html", userID=userID)
 
 # 회원가입 화면
