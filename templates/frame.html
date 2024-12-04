@@ -46,12 +46,21 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        hr {
-            border: none;
-            height: 1px;
-            background-color: #000000;
+        .chatbot-button {
+            position: fixed; 
+            bottom: 25px; 
+            right: 25px;
+            cursor: pointer; 
+            z-index: 1000;
         }
-        
+
+        .chatbot-button img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: 0px 0px 20px 1px #5e5e5e;
+        }
+
         footer {
             margin-top: auto;
         }
@@ -98,6 +107,10 @@
         {% block content %}
         {% endblock %}
     </main>
+    <div class="chatbot-button" onClick="openChatbot()">
+        <img src="static/img/pic.png" alt="챗봇" />
+    </div>
+
     <footer>
         <div class="grey_footer">
             <p style="font-weight: bold;">㈜비건컴퍼니</p>
@@ -115,5 +128,10 @@
             <p>일반 / 제휴 문의</p>
         </div>
     </footer>
+    <script>
+        function openChatbot() {
+            window.open('/chatbot', '챗봇', 'width=400,height=600');
+        }
+    </script>
 </body>
 </html>

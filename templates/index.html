@@ -118,18 +118,18 @@
 <div class="category-buttons">
     <div class="category">
         <div class="up-buttons">
-            <button class="main_menu" value="all">전체보기</button>
-            <button class="main_menu" value="korea">한&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
-            <button class="main_menu" value="france">양&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
-            <button class="main_menu" value="china">중&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
-            <button class="main_menu" value="japan">일&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="전체보기" onclick="redirectToCategory(this.value)">전체보기</button>
+            <button class="main_menu" value="한식" onclick="redirectToCategory(this.value)">한&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="양식" onclick="redirectToCategory(this.value)">양&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="중식" onclick="redirectToCategory(this.value)">중&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="일식" onclick="redirectToCategory(this.value)">일&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
         </div>
         <div class="down-buttons">
-            <button class="main_menu" value="flour">분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
-            <button class="main_menu" value="sasia">동&nbsp;남&nbsp;아</button>
-            <button class="main_menu" value="india">인도/중동</button>
-            <button class="main_menu" value="bread">베이커리/카페</button>
-            <button class="main_menu" value="etc">기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;타</button>
+            <button class="main_menu" value="분식" onclick="redirectToCategory(this.value)">분&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;식</button>
+            <button class="main_menu" value="동남아" onclick="redirectToCategory(this.value)">동&nbsp;남&nbsp;아</button>
+            <button class="main_menu" value="인도/중동" onclick="redirectToCategory(this.value)">인도/중동</button>
+            <button class="main_menu" value="베이커리/카페" onclick="redirectToCategory(this.value)">베이커리/카페</button>
+            <button class="main_menu" value="기타" onclick="redirectToCategory(this.value)">기&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;타</button>
         </div>
     </div>
 </div>
@@ -322,6 +322,10 @@
     
             highlightNext();
         });
+
+        function redirectToCategory(category) {
+            window.location.href = `/res_list?category=${category}`; // 선택한 카테고리로 리다이렉션
+        }
     </script>
 
 </div>

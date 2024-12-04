@@ -1,6 +1,332 @@
 {% extends "frame.html" %}
 
 {% block content %}
-<h3>식당 리스트 화면입니다.</h3>
-<p>개발 중</p>
+
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 30px;
+    }
+    .container h2 {
+        text-align: center;
+        margin : 0;
+    }
+    .filter {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px
+    }
+    .filter select {
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 20px;
+    }
+    .category {
+        padding : 15px 10px;
+        background-color: #979797;
+    }
+    .b_filter {
+        background-color: #979797;
+        border: 0;
+        color: white;
+    }
+    .region {
+        margin: 10px 20px;
+    }
+    .region select{
+        justify-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    form button {
+        color : white;
+        background-color: #B72424;
+        padding: 10px;
+        border: 0px;
+        border-radius: 5px;
+        margin : 10px 0px;
+    }
+    .grid {
+        padding : 30px 20px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+    }
+    .card {
+        padding: 20px;
+        text-align: center;
+    }
+    .location {
+        font-size: 14px;
+        color: #666;
+    }
+    .c_category {
+        font-size: 14px;
+        color: #666;
+        margin-left: 10px;
+    }
+    input[type="text"] {
+        margin: 10px 0;
+        padding: 10px;
+        width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .info {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+    }
+    .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 5px;
+        text-align: left;
+    }
+    .card {
+        background-color: white;
+        border: none;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        text-decoration: none; 
+        padding: 10px 15px; 
+        margin: 0 5px;
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        background-color: #f8f8f8; 
+        color: #333;
+        transition: background-color 0.3s, color 0.3s; 
+    }
+
+    .pagination a:hover {
+        background-color: #B72424; 
+        color: white; 
+    }
+
+    .pagination span {
+        padding: 10px 15px;
+        margin: 0 5px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        background-color: #B72424; 
+        color: white; 
+    }
+</style>
+
+<div class="container">
+    <h2>VEGAN RESTAURANT</h2>
+    <div class="filter">
+        <select name="view-count" id="view-count" onchange="updateViewCount()">
+            <option id="view" value="15" {% if per_page == 15 %}selected{% endif %}>15개 보기</option>
+            <option id="view" value="20" {% if per_page == 20 %}selected{% endif %}>20개 보기</option>
+            <option id="view" value="25" {% if per_page == 25 %}selected{% endif %}>25개 보기</option>
+            <option id="view" value="30" {% if per_page == 30 %}selected{% endif %}>30개 보기</option>
+        </select>
+    </div>    
+    
+    <div class="category">
+        <button class="b_filter" data-category="전체보기" onclick="filterRestaurants('전체보기', this)">전체보기</button>
+        <button class="b_filter" data-category="한식" onclick="filterRestaurants('한식', this)">한식</button>
+        <button class="b_filter" data-category="양식" onclick="filterRestaurants('양식', this)">양식</button>
+        <button class="b_filter" data-category="중식" onclick="filterRestaurants('중식', this)">중식</button>
+        <button class="b_filter" data-category="일식" onclick="filterRestaurants('일식', this)">일식</button>
+        <button class="b_filter" data-category="분식" onclick="filterRestaurants('분식', this)">분식</button>
+        <button class="b_filter" data-category="동남아" onclick="filterRestaurants('동남아', this)">동남아</button>
+        <button class="b_filter" data-category="인도/중동" onclick="filterRestaurants('인도/중동', this)">인도/중동</button>
+        <button class="b_filter" data-category="베이커리/카페" onclick="filterRestaurants('베이커리/카페', this)">베이커리/카페</button>
+        <button class="b_filter" data-category="기타" onclick="filterRestaurants('기타', this)">기타</button>
+    </div>
+
+    <div class="region">
+        <form method="post">
+            <input type="text" name="search" placeholder="식당명을 입력하세요.">
+            <select id="city" name="city" onchange="updateDistricts()">
+                <option value="" disabled selected>:: 시/도 ::</option>
+                <option value="서울">서울</option>
+                <option value="경기">경기</option>
+                <option value="인천">인천</option>
+                <option value="대전">대전</option>
+                <option value="대구">대구</option>
+                <option value="부산">부산</option>
+                <option value="울산">울산</option>
+                <option value="광주">광주</option>
+                <option value="강원">강원</option>
+                <option value="충청북도">충청북도</option>
+                <option value="충청남도">충청남도</option>
+                <option value="경상북도">경상북도</option>
+                <option value="경상남도">경상남도</option>
+                <option value="전라북도">전라북도</option>
+                <option value="전라남도">전라남도</option>
+                <option value="제주도">제주도</option>
+            </select>
+            <select id="district" name="district">
+                <option value="" disabled selected>:: 시/군/구 ::</option>
+                
+            </select>
+            <button class="button" type="submit">Find restaurant</button>
+        </form>
+    </div>
+
+    <div class="grid" id="restaurant-grid">
+        {% if restaurants and restaurants|length > 0 %}
+            {% for restaurant in paginated_restaurants %}
+            <button class="card" data-category="{{ restaurant[1] }}" onclick="redirectToDetail('{{ restaurant[0] }}')">
+                <div class="info">
+                    <span class="location">{{ restaurant[9] }}</span>
+                    <span class="c_category">{{ restaurant[1] }}</span>
+                </div>
+                <div class="title">{{ restaurant[2] }}</div>
+            </button>
+            {% endfor %}
+        {% else %}
+            <p>식당이 없습니다.</p>
+        {% endif %}
+    </div>
+
+    <div class="pagination">
+        {% if start_page_group > 1 %}
+            <a href="{{ url_for('res_list', page=start_page_group - 1, category=category, per_page=items_per_page) }}">이전</a>
+        {% endif %}
+    
+        {% if total_pages > 1 %}
+            {% for page_num in range(start_page_group, end_page_group + 1) %}
+                {% if page_num == page %}
+                    <span>{{ page_num }}</span>
+                {% else %}
+                    <a href="{{ url_for('res_list', page=page_num, category=category, per_page=items_per_page) }}">{{ page_num }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    
+        {% if end_page_group < total_pages %}
+            <a href="{{ url_for('res_list', page=end_page_group + 1, category=category, per_page=items_per_page) }}">다음</a>
+        {% endif %}
+    </div>
+    
+</div>
+
+<script>
+    function filterRestaurants(category, button) {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            if (category === '전체보기' || card.dataset.category === category) {
+                card.style.display = 'block'; // 보이기
+            } else {
+                card.style.display = 'none'; // 숨기기
+            }
+        });
+
+        // 버튼 활성화 처리
+        const buttons = document.querySelectorAll('.b_filter');
+        buttons.forEach(btn => {
+            btn.classList.remove('active'); // 모든 버튼에서 active 클래스 제거
+            btn.style.color = ''; // 기본 색상으로 초기화
+        });
+
+        // 클릭된 버튼에 active 클래스 추가 및 색상 변경
+        button.classList.add('active');
+        button.style.color = 'red';
+
+        const currentPage = 1;  // 페이지를 1로 초기화
+        const viewCount = document.getElementById('view').value; // 현재 선택된 식당 수
+
+        // URL을 생성하여 해당 카테고리의 식당 목록을 요청
+        window.location.href = `/res_list?category=${category}&page=${currentPage}&per_page=${viewCount}`;
+    }
+
+    function updateViewCount() {
+        const viewCount = document.getElementById('view-count').value; // 선택된 식당 수
+        console.log("Selected view count:", viewCount); // viewCount 출력
+        const currentPage = '{{ page }}';  // 현재 페이지 정보
+        const currentCategory = document.querySelector('.b_filter.active') ? document.querySelector('.b_filter.active').dataset.category : '전체보기'; 
+
+        // URL을 생성할 때 page, per_page, category를 쿼리 매개변수로 추가합니다.
+        window.location.href = `{{ url_for('res_list', page=currentPage, category=currentCategory) }}?per_page=${viewCount}`;
+    }
+
+
+    function redirectToDetail(restaurantId) {
+        window.location.href = `/res_detail?restaurant_id=${restaurantId}`;
+    }
+
+    function updateDistricts() {
+            const citySelect = document.getElementById("city");
+            const districtSelect = document.getElementById("district");
+            const selectedCity = citySelect.value;
+
+            // 기존 옵션 삭제
+            districtSelect.innerHTML = '<option value="" disabled selected>:: 시/군/구 ::</option>';
+
+            let districts = [];
+
+            // 선택된 시/도에 따른 시/군/구 목록 설정
+            if (selectedCity === "서울") {
+                districts = ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구",
+                         "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"];
+            } else if (selectedCity == "경기") {
+                districts = ["고양시", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시", "수원시", "시흥시", 
+                        "안산시", "안성시", "안양시", "양주시", "오산시", "용인시", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", 
+                         "하남시", "화성시", "가평군", "양평군", "여주군", "연천군"];
+            } else if (selectedCity === "부산") {
+                districts = ["강서구", "금정구", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구", "기장군"];
+            } else if (selectedCity === "대전") {
+                districts = ["유성구", "서구", "동구", "중구", "대덕구"];
+            } else if (selectedCity === "대구") {
+                districts = ["남구", "달서구", "동구", "북구", "서구", "수성구", "중구", "달성군"];
+            } else if (selectedCity === "인천") {
+                districts = ["계양구", "미추홀구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "강화군", "옹진군"];
+            } else if (selectedCity === "광주") {
+                districts = ["광산구", "남구", "동구", "북구", "서구"];
+            } else if (selectedCity == "울산") {
+                districts = ["남구", "동구", "북구", "중구", "울주군"];
+            } else if (selectedCity == "강원") {
+                districts = ["강릉시", "동해시", "삼척시", "속초시", "원주시", "춘천시", "태백시", "고성군", "양구군", "양양군",
+                        "영월군", "인제군", "정선군", "철원군", "평창군", "홍천군", "화천군", "횡성군"];
+            } else if (selectedCity == "충청북도") {
+                districts = ["제천시", "청주시", "충주시", "괴산군", "단양군", "보은군",  "영동군", "옥천군", "음성군", "증평군", "진천군", "청원군"];
+            } else if (selectedCity == "충청남도") {
+                districts = ["계룡시", "공주시", "논산시", "보령시", "서산시", "아산시", "천안시", "금산군", "당진군",
+                        "부여군", "서천군", "연기군", "예산군", "청양군", "태안군", "홍성군"];
+            } else if (selectedCity == "경상북도") {
+                districts = ["경산시", "경주시", "구미시", "김천시", "문경시", "상주시", "안동시", "영주시", "영천시", "포항시", "고령군", "군위군",
+                        "봉화군", "성주군", "영덕군", "영양군", "예천군", "울릉군", "울진군", "의성군", "청도군", "청송군", "칠곡군"];
+            } else if (selectedCity == "경상남도") {
+                districts = ["거제시", "김해시", "마산시", "밀양시", "사천시", "양산시", "진주시", "진해시", "창원시", "통영시", "거창군", "고성군",
+                        "남해군", "산청군", "의령군", "창녕군", "하동군", "함안군", "함양군", "합천군"];
+            } else if (selectedCity == "전라북도") {
+                districts = ["군산시", "김제시", "남원시", "익산시", "전주시", "정읍시", "고창군", "무주군", "부안군", "순창군", "완주군", "임실군", "장수군", "진안군"];
+            } else if (selectedCity == "전라남도") {
+                districts = ["광양시", "나주시", "목포시", "순천시", "여수시", "강진군", "고흥군", "곡성군", "구례군", "담양군", "무안군", 
+                        "보성군", "신안군", "영광군", "영암군", "완도군", "장성군", "장흥군", "진도군", "함평군", "해남군", "화순군"];
+            } else if (selectedCity == "제주도") {
+                districts = ["서귀포시", "제주시"];
+            }
+
+            // 시/군/구 옵션 추가
+            districts.forEach(district => {
+                const option = document.createElement("option");
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+
+    function redirectToDetail(restaurantId) {
+        window.location.href = `/res_detail?restaurant_id=${restaurantId}`;
+    }
+
+</script>
+
+
 {% endblock %}
