@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key' # 세션용 비밀키
 
 class DB:
     def __init__(self, database_url):
-        self.conn = self.conn = psycopg2.connect(database_url, options='-c idle_in_transaction_session_timeout=300000')
+        self.conn = self.conn = psycopg2.connect(database_url)
         self.cur = self.conn.cursor()
 
     def execute_query(self, query, params):
@@ -77,15 +77,27 @@ class DB:
             self.conn.rollback()
             print(f"Error during select_restaurants_by_category execution: {e}")
             return None
+        
+    def select_recipes_by_category(self):
+        try:
+            self.cur.execute("""
+                    SELECT r.*
+                    FROM public.recipe r;
+                """)
+            return self.cur.fetchall()
+        except Exception as e:
+            self.conn.rollback()
+            print(f"Error during select_recipes_by_category execution: {e}")
+            return None
    
-    def select_review_by_id(self, restaurant_id):
+    def select_review_by_id(self, id):
         try:
             self.cur.execute("""
                 SELECT r.*, u.name
                 FROM public.review r
                 JOIN public.users u ON r.user_num = u.user_num
-                WHERE r.restaurant_num = %s;
-            """, (restaurant_id,))
+                WHERE r.restaurant_num = %s or r.recipe_num = %s;
+            """, (id, id, ))
             return self.cur.fetchall()  # 여러 리뷰와 사용자 이름을 반환
         except Exception as e:
             print(f"Error during select_review_by_id execution: {e}")
@@ -113,12 +125,34 @@ class DB:
             print(f"Error during select_average_rating_and_count execution: {e}")
             return None
         
-    def count_reviews_by_restaurant_id(self, restaurant_id):
+    def select_recipe_by_id(self, recipe_id):
+        try:
+            self.cur.execute("""
+                SELECT 
+                    r.*,
+                    AVG(rv.rating) AS average_rating, 
+                    COUNT(rv.rating) AS review_count
+                FROM 
+                    public.recipe r
+                LEFT JOIN 
+                    public.review rv ON r.recipe_num = rv.recipe_num
+                WHERE 
+                    r.recipe_num = %s
+                GROUP BY 
+                    r.recipe_num;
+            """, (recipe_id,))
+            result = self.cur.fetchone()
+            return result
+        except Exception as e:
+            print(f"Error during select_average_rating_and_count execution: {e}")
+            return None
+
+    def count_reviews_by_restaurant_id(self, id):
         try:
             self.cur.execute("""
                 SELECT COUNT(*) FROM public.review 
-                WHERE restaurant_num = %s;
-            """, (restaurant_id,))
+                WHERE restaurant_num = %s or recipe_num = %s;
+            """, (id, id, ))
             return self.cur.fetchone()[0]  # 총 리뷰 수 반환
         except Exception as e:
             print(f"Error during count_reviews_by_restaurant_id execution: {e}")
@@ -237,9 +271,41 @@ def find_pw(userID):
     return render_template("find2.html", userID=userID)
 
 # 회원가입 화면
-@app.route("/join")
+@app.route("/join", methods=['POST', 'GET'])
 def join():
+    if request.method=='POST':
+        
+        userID = request.form.get("userID")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        nickname = request.form.get("nickname")
+        birthdate = request.form.get("birthdate")
+        full_email = f"{request.form.get('email')}@{request.form.get('email_domain')}"
+       
+        receive_ads = 'receive_ads' in request.form
+        
+        if password != confirm_password:
+            return render_template('join.html', message='비밀번호가 일치하지 않습니다. 다시 입력해주세요.')
+        elif len(password)<8:
+            return render_template('join.html', message='8자리 이상의 비밀번호를 입력해주세요.')
+
+        # 사용자 ID 중복 체크
+        user_check = db.select_user(userID)
+        if user_check:
+            return render_template('join.html', message='이미 존재하는 아이디입니다.')
+
+        # 이메일 중복 체크
+        cur = db.execute_query("SELECT * FROM public.users WHERE email = %s;", (full_email,))
+        if cur.fetchone():
+            return render_template('join.html', message='이미 존재하는 이메일입니다.')
+
+        db.execute_query("""
+		    INSERT INTO public.users (name, user_id, password, email, birthdate, e_checkbox, registration_date) 
+		    VALUES (%s, %s, %s, %s, %s, %s, now());""", (nickname, userID, password, full_email, birthdate, receive_ads))
+        return redirect(url_for('login'))
+    
     return render_template("join.html")
+
 
 
 ####### 개발 2주차 #######
@@ -339,14 +405,12 @@ def res_detail():
                 INSERT INTO public.review (user_num, content, registration_date, restaurant_num, rating)
                 VALUES (%s, %s, now(),  %s, %s);
             """, (user_num, review_text, restaurant_id, rating))
-            return redirect(url_for('res_detail', restaurant_id=restaurant_id, page=page))  # 리뷰 제출 후 페이지 새로 고침
+            return redirect(url_for('res_detail', restaurant_id=restaurant_id, page=page)) 
 
     restaurant = db.select_restaurant_by_id(restaurant_id)
     reviews = db.select_review_by_id(restaurant_id)
-    total_reviews = restaurant[12] if restaurant else 0
-    total_pages = (total_reviews + 4) // 5  # 5개씩 나누기
 
-    return render_template("restaurant_detail.html", ID=ID, name=name, restaurant=restaurant, reviews=reviews, page=page, total_pages=total_pages)
+    return render_template("restaurant_detail.html", ID=ID, name=name, restaurant=restaurant, reviews=reviews, page=page)
 
 
 
@@ -373,14 +437,93 @@ def predict():
 @app.route("/rec_list")
 def rec_list():
     ID, name = get_user_info()
-    return render_template("recipe_list.html", ID=ID, name=name)
+    
+    # 페이지 번호 가져오기 및 처리
+    page = request.args.get('page', '1') 
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1 
+
+    category = request.args.get('category', '전체보기')
+    
+    # POST 요청에서 검색 조건 가져오기
+    search_term = request.form.get('search')
+
+    # 카테고리에 따라 식당 목록 가져오기
+    recipes = db.select_recipes_by_category()
+
+    # 지역 필터링
+    if search_term:
+        recipes = [res for res in recipes if search_term in res[2]]
+    
+    # 페이지당 표시할 식당 수
+    items_per_page = request.args.get('per_page', '15')
+    print(items_per_page)
+    try:
+        items_per_page = int(items_per_page)
+    except ValueError:
+        items_per_page = 15 
+
+    # 페이징 처리
+    start_index = (page - 1) * items_per_page
+    end_index = start_index + items_per_page
+
+    # 페이지네이션 처리
+    paginated_recipes = recipes[start_index:end_index] if recipes else []
+    total_recipes = len(recipes) if recipes else 0  # 전체 식당 수
+    total_pages = (total_recipes + items_per_page - 1) // items_per_page if total_recipes > 0 else 1  # 총 페이지 수
+
+    # 페이지 번호를 10개씩 묶어서 보여주기
+    page_group_size = 10
+    start_page_group = (page - 1) // page_group_size * page_group_size + 1
+    end_page_group = min(start_page_group + page_group_size - 1, total_pages)
+
+    return render_template(
+        "recipe_list.html",
+        ID=ID,
+        name=name,
+        recipes=recipes,  # 전체 식당 목록
+        paginated_recipes=paginated_recipes,
+        category=category,
+        page=page,
+        total_pages=total_pages,
+        start_page_group=start_page_group,
+        end_page_group=end_page_group
+    )
 
 # 레시피 상세 화면
-@app.route("/rec_detail")
+@app.route("/rec_detail", methods=['GET', 'POST'])
 def rec_detail():
     ID, name = get_user_info()
-    return render_template("recipe_detail.html", ID=ID, name=name)
+    recipe_id = request.args.get('recipe_id')
+    page = int(request.args.get('page', 1))
 
+    # user_num 가져오기
+    user_num = db.execute_query("""
+                SELECT user_num FROM public.users WHERE user_id = %s;
+            """, (ID,)).fetchone()
+
+    # user_num이 None이 아닐 경우에만 가져옴
+    user_num = user_num[0] if user_num else None
+
+    if request.method == 'POST':
+        # 리뷰 제출 처리
+        review_text = request.form.get('reviewText')
+        rating = request.form.get('rating')
+
+        if ID and recipe_id and review_text and rating and user_num:
+            # 데이터베이스에 리뷰 저장
+            db.execute_query("""
+                INSERT INTO public.review (user_num, content, registration_date, recipe_num, rating)
+                VALUES (%s, %s, now(),  %s, %s);
+            """, (user_num, review_text, recipe_id, rating))
+            return redirect(url_for('rec_detail', recipe_id=recipe_id, page=page))
+
+    recipe = db.select_recipe_by_id(recipe_id)
+    reviews = db.select_review_by_id(recipe_id)
+
+    return render_template("recipe_detail.html", ID=ID, name=name, recipe=recipe, reviews=reviews, page=page)
 
 if __name__ == "__main__":
     app.run()
