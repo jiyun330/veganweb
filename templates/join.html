@@ -67,26 +67,27 @@
 
     <div class="signup-container">
         <h2>회원가입</h2>
-        <input type="text" placeholder="아이디" required>
-        <input type="password" placeholder="비밀번호 (8자 이상 입력)" required>
-        <input type="password" placeholder="비밀번호 확인" required>
-        <input type="text" placeholder="닉네임" required>
-        <input type="date" placeholder="생년월일" required> 
-        <div class="email_inline"> 
-            <input type="email" placeholder="이메일" required> @ 
-            <select>
-                <option value="" disabled selected>:: 이메일 선택 ::</option>
-                <option value="gmail.com">gmail.com</option>
-                <option value="naver.com">naver.com</option>
-                <option value="daum.net">daum.net</option>
-                <!-- 추가 이메일 도메인을 필요에 따라 추가 -->
-            </select>
-        </div>
-        
-        <label>
-            <input type="checkbox"> [선택] 광고성 이메일을 수신합니다.
-        </label>
-        <button class="sign-up-button">SIGN UP</button>
+        <form method="post">
+            <input type="text" name="userID" placeholder="아이디" required>
+            <input type="password" name="password" placeholder="비밀번호 (8자 이상 입력)" required>
+            <input type="password" name="confirm_password" placeholder="비밀번호 확인" required>
+                <input type="text" name="nickname" placeholder="닉네임" required>
+                <input type="date" name="birthdate" placeholder="생년월일" required> 
+                <div class="email_inline"> 
+                    <input type="text" name="email" placeholder="이메일" required>@
+                    <select name="email_domain">
+                        <option value="" disabled selected>:: 이메일 선택 ::</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="daum.net">daum.net</option>
+                    </select>
+                </div>
+                
+                <label>
+                    <input type="checkbox" name="receive_ads"> [선택] 광고성 이메일을 수신합니다.
+                </label>
+                <button type="submit" class="sign-up-button">SIGN UP</button>
+            </form>
     </div>
 
 {% endblock %}
