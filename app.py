@@ -32,8 +32,6 @@ class DB:
         except Exception as e:
             print(f"Error during connection cleanup: {e}")
 
-
-    
     def select_user(self, userID):
         try:
             self.cur.execute("SELECT user_id, name FROM public.users WHERE user_id = %s;", (userID, ))
@@ -96,8 +94,23 @@ class DB:
                 SELECT r.*, u.name
                 FROM public.review r
                 JOIN public.users u ON r.user_num = u.user_num
-                WHERE r.restaurant_num = %s or r.recipe_num = %s;
-            """, (id, id, ))
+                WHERE r.restaurant_num = %s
+                ORDER BY registration_date;
+            """, (id, ))
+            return self.cur.fetchall()  # 여러 리뷰와 사용자 이름을 반환
+        except Exception as e:
+            print(f"Error during select_review_by_id execution: {e}")
+            return []
+        
+    def select_review_recipe(self, id):
+        try:
+            self.cur.execute("""
+                SELECT r.*, u.name
+                FROM public.review r
+                JOIN public.users u ON r.user_num = u.user_num
+                WHERE r.recipe_num = %s
+                ORDER BY registration_date;
+            """, (id, ))
             return self.cur.fetchall()  # 여러 리뷰와 사용자 이름을 반환
         except Exception as e:
             print(f"Error during select_review_by_id execution: {e}")
@@ -146,18 +159,6 @@ class DB:
         except Exception as e:
             print(f"Error during select_average_rating_and_count execution: {e}")
             return None
-
-    def count_reviews_by_restaurant_id(self, id):
-        try:
-            self.cur.execute("""
-                SELECT COUNT(*) FROM public.review 
-                WHERE restaurant_num = %s or recipe_num = %s;
-            """, (id, id, ))
-            return self.cur.fetchone()[0]  # 총 리뷰 수 반환
-        except Exception as e:
-            print(f"Error during count_reviews_by_restaurant_id execution: {e}")
-            return 0
-
     
     #  챗봇 sql
     def select_restaurant(self):
@@ -316,18 +317,18 @@ def res_list():
     ID, name = get_user_info()
     
     # 페이지 번호 가져오기 및 처리
-    page = request.args.get('page', '1')  # 기본값을 문자열로 설정
+    page = request.args.get('page', '1')  
     try:
-        page = int(page)  # 문자열을 정수로 변환
+        page = int(page)
     except ValueError:
-        page = 1  # 변환 실패 시 기본값으로 설정
+        page = 1 
 
     category = request.args.get('category', '전체보기')
     
     # POST 요청에서 검색 조건 가져오기
     search_term = request.form.get('search')
-    city = request.form.get('city')
-    district = request.form.get('district')
+    city = request.form.get('city') or request.args.get('city')
+    district = request.form.get('district') or request.args.get('district')
 
     # 카테고리에 따라 식당 목록 가져오기
     restaurants = db.select_restaurants_by_category(category)
@@ -344,9 +345,9 @@ def res_list():
     items_per_page = request.args.get('per_page', '15')
     print(items_per_page)
     try:
-        items_per_page = int(items_per_page)  # 문자열을 정수로 변환
+        items_per_page = int(items_per_page) 
     except ValueError:
-        items_per_page = 15  # 변환 실패 시 기본값 설정
+        items_per_page = 15
 
     # 페이징 처리
     start_index = (page - 1) * items_per_page
@@ -521,7 +522,7 @@ def rec_detail():
             return redirect(url_for('rec_detail', recipe_id=recipe_id, page=page))
 
     recipe = db.select_recipe_by_id(recipe_id)
-    reviews = db.select_review_by_id(recipe_id)
+    reviews = db.select_review_recipe(recipe_id)
 
     return render_template("recipe_detail.html", ID=ID, name=name, recipe=recipe, reviews=reviews, page=page)
 
